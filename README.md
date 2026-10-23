@@ -4,7 +4,7 @@
 
 **Live battery power, estimated charge and time remaining in your Mac's menu bar.**
 
-[Download for Mac](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.1/ChargeBar.zip) · [Releases](https://github.com/1Utkarsh1/ChargeBar/releases) · [Report a bug](https://github.com/1Utkarsh1/ChargeBar/issues/new/choose)
+[Download DMG](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.dmg) · [Download ZIP](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.zip) · [Releases](https://github.com/1Utkarsh1/ChargeBar/releases) · [Report a bug](https://github.com/1Utkarsh1/ChargeBar/issues/new/choose)
 
 ![macOS 14 or later](https://img.shields.io/badge/macOS-14%2B-111111?logo=apple)
 ![Apple Silicon](https://img.shields.io/badge/Apple-Silicon-14b8a6)
@@ -45,9 +45,11 @@ Click the menu bar reading for power history, charger details and estimated time
 
 ## Install
 
-1. Download [ChargeBar.zip](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.1/ChargeBar.zip) from the release.
-2. Unzip it and move **ChargeBar.app** into **Applications**.
-3. Open the app. Its percentage and watts appear in the menu bar.
+1. Download [ChargeBar.dmg](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.dmg) from the prerelease.
+2. Open the DMG and drag **ChargeBar.app** onto the **Applications** shortcut. If updating, quit the old app before replacing it.
+3. Eject the DMG, then open ChargeBar from Applications. Its percentage and watts appear in the menu bar.
+
+Prefer a ZIP? Download [ChargeBar.zip](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.zip), unzip it, and move **ChargeBar.app** into **Applications**.
 
 **Requirements:** an Apple Silicon Mac with a built-in battery, macOS 14 or later. Intel binaries are not included. The initial public preview was tested locally on macOS 27; support across other Macs and macOS versions is still being verified.
 
@@ -93,7 +95,7 @@ cd ChargeBar
 bash build.sh
 ```
 
-The script runs the checks and creates **`dist/ChargeBar.app`** and **`dist/ChargeBar.zip`**. See [building and verification](docs/BUILDING.md), the [local test record](docs/VERIFICATION.md), [contribution guidance](CONTRIBUTING.md) and the [changelog](CHANGELOG.md).
+The script runs the checks and creates **`dist/ChargeBar.app`**, **`dist/ChargeBar.dmg`** and **`dist/ChargeBar.zip`**. See [building and verification](docs/BUILDING.md), the [local test record](docs/VERIFICATION.md), [contribution guidance](CONTRIBUTING.md) and the [changelog](CHANGELOG.md).
 
 For a bug report, include the exact app and macOS versions, Mac model/chip, charging state, reproduction steps and expected versus displayed readings. Use the [issue forms](https://github.com/1Utkarsh1/ChargeBar/issues/new/choose).
 

@@ -1,5 +1,16 @@
 # ChargeBar verification
 
+## 1.3.2 — DMG distribution
+
+Checked locally on Apple Silicon with macOS 27 on 23 October 2026.
+
+- The build passed all telemetry, predictor, runtime and placement assertions, including the discharge rebound regression and 200 simulated power transitions.
+- The compressed DMG passed `hdiutil verify`, mounted read-only, contained ChargeBar and a correct `/Applications` shortcut, and ejected cleanly.
+- The ZIP passed its integrity check. Every app file in the DMG and ZIP matched the local build; both packaged apps passed strict signature verification and reported version 1.3.2, build 8.
+- The executable inside the mounted DMG successfully read live battery telemetry with `--sample`. The binary is arm64 and targets macOS 14 or later.
+
+This release changes distribution packaging and screenshots. Battery prediction remains the 1.3.1 implementation, with the same physical sleep/resume and measurement limits described below. The app remains ad hoc signed and is not Apple notarized.
+
 ## 1.3.1 — Draining estimate correction
 
 Checked locally on Apple Silicon with macOS 27 on 23 October 2026.

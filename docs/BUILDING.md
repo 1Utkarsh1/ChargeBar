@@ -4,15 +4,15 @@
 
 - macOS with Apple's Command Line Tools and `swiftc` available.
 - The application targets Apple Silicon and macOS 14 or later.
-- The local 1.3.0 and 1.3.1 builds were verified with Swift 6.4 on macOS 27. GitHub Actions checks the build separately on its configured macOS runner.
+- Local builds from 1.3.0 through 1.3.2 were verified with Swift 6.4 on macOS 27. GitHub Actions checks the build separately on its configured macOS runner.
 
 ## Build
 
 From the repository root, run `bash build.sh`.
 
-The script runs the checks, compiles an optimized arm64 application, applies and verifies an ad hoc signature, then creates `dist/ChargeBar.app` and `dist/ChargeBar.zip`. It packages the ZIP from a temporary directory before moving the app into the checkout, so cloud-managed file metadata cannot affect the packaged signature.
+The script runs the checks, compiles an optimized arm64 application, applies and verifies an ad hoc signature, then creates `dist/ChargeBar.app`, `dist/ChargeBar.dmg` and `dist/ChargeBar.zip`. It packages both downloads from a temporary directory before moving the app into the checkout, so cloud-managed file metadata cannot affect the packaged signature. The compressed DMG contains the app and an Applications shortcut. The script verifies the disk image's integrity after creation.
 
-The script refuses to overwrite an existing app or ZIP. Move an existing `dist` directory before rebuilding.
+The script refuses to overwrite an existing app, DMG or ZIP. Move an existing `dist` directory before rebuilding.
 
 The app uses Apple's AppKit, SwiftUI, Foundation and IOKit frameworks. No third-party dependency or REA installation is required.
 

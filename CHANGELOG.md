@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.2 — DMG download
+
+- Added a compressed DMG with ChargeBar and an Applications shortcut for installation by dragging the app.
+- Kept the ZIP download and included both formats in the build script and CI artifacts.
+- Replaced the README's menu bar image with a clean capture and refreshed the battery panel image.
+- Includes the discharge estimate correction from 1.3.1.
+
 ## 1.3.1 — Discharge estimate correction
 
 - Fixed an upward rebound in the estimated percentage while the battery was draining. The smoothing correction now follows the measured direction of charge flow.
