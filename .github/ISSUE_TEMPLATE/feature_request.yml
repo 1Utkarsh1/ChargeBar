@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an improvement to ChargeBar.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this help you do?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested behavior
+      description: Explain how you would expect the feature to work.
+    validations:
+      required: true

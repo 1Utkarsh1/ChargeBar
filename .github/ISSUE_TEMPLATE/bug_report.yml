@@ -1,0 +1,35 @@
+name: Bug report
+description: Report incorrect readings, connection behavior, a crash or a layout problem.
+body:
+  - type: input
+    id: app_version
+    attributes:
+      label: ChargeBar version
+      placeholder: 1.3.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: macOS version and Mac model/chip
+    validations:
+      required: true
+  - type: input
+    id: power
+    attributes:
+      label: Charging state and adapter
+      description: Say whether the Mac was on battery, plugged in, charging or paused. Include adapter rating if relevant.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened and what did you expect?
+      description: Include displayed versus expected readings, relevant screenshots or a crash report. Omit serial numbers and unrelated personal information.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include whether the panel was open or closed and whether the Mac had just slept or the charger had changed.
+    validations:
+      required: true

@@ -1,0 +1,7 @@
+.DS_Store
+/dist/
+/build/
+/chargebar-panel.png
+*.dSYM/
+*.xcuserstate
+xcuserdata/
