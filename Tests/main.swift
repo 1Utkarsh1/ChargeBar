@@ -113,13 +113,16 @@ assert(near(predictor.update(gauge(28, current: 3600, charging: false), at: 92.5
 assert(near(predictor.update(gauge(28, current: nil), at: 93), 28.885))
 assert(near(predictor.update(gauge(28, current: nil), at: 93.5), 28.885))
 assert(near(predictor.update(gauge(29), at: 110), 29), "Long gaps must reanchor rather than extrapolate through sleep")
-assert(predictor.update(wholeOnly, at: 111) == nil)
+assert(near(predictor.update(wholeOnly, at: 111), 29) && predictor.isLimited)
 assert(predictor.update(nil, at: 112) == nil)
+predictor.reset()
 _ = predictor.update(gauge(99.99), at: 113)
 assert(predictor.update(gauge(99.99), at: 114)! <= 100)
 _ = predictor.update(gauge(0.001, current: -3600, charging: false), at: 115)
 assert(predictor.update(gauge(0.001, current: -3600, charging: false), at: 116)! >= 0)
-assert(abs(predictor.update(gauge(50, current: -3600, charging: false), at: 116.5)! - 50) <= 2)
+let beforeGaugeJump = predictor.value!
+assert(predictor.update(gauge(50, current: -3600, charging: false), at: 116.5)! <= beforeGaugeJump)
+assert(predictor.isLimited, "An opposing gauge jump must wait instead of reversing discharge")
 var limited = PercentagePredictor()
 _ = limited.update(gauge(28), at: 0)
 for step in 1...1200 { _ = limited.update(gauge(28), at: Double(step) * 0.5) }
@@ -145,8 +148,52 @@ for step in 1...180 {
     assert(adjusted.displayValue! <= 100)
 }
 assert(String(format: "%.2f%%", adjusted.displayValue!) == "100.00%")
-assert(adjusted.update(wholeOnly, at: 91) == nil && adjusted.displayValue == nil)
+assert(adjusted.update(wholeOnly, at: 91) != nil && adjusted.displayValue == 100 && adjusted.isLimited)
+adjusted.reset()
+assert(adjusted.update(wholeOnly, at: 92) == nil && adjusted.displayValue == nil)
 print("Passed: +1 percentage point display adjustment, exact example values, unchanged raw estimate, and 100.00% ceiling.")
+
+var dischargeRegression = PercentagePredictor()
+_ = dischargeRegression.update(gauge(16.5, current: -3600, charging: false), at: 0)
+for step in 1...118 {
+    _ = dischargeRegression.update(gauge(16.5, current: -3600, charging: false), at: Double(step) * 0.5)
+}
+assert(near(dischargeRegression.displayValue, 16.91))
+_ = dischargeRegression.update(gauge(16.49, current: -3600, charging: false), at: 59.5)
+for step in 120...180 {
+    let previous = dischargeRegression.value!
+    let next = dischargeRegression.update(gauge(16.49, current: -3600, charging: false), at: Double(step) * 0.5)!
+    assert(next < previous, "Discharge must continue downward while reconciling an overshot prediction")
+}
+for (time, reading) in [(90.5, gauge(17, current: -3600, charging: false)),
+                         (100.0, gauge(17.2, current: -3600, charging: false)),
+                         (100.5, wholeOnly),
+                         (101.0, gauge(17.3, current: nil, charging: false))] {
+    let previous = dischargeRegression.value!
+    assert(dischargeRegression.update(reading, at: time)! <= previous,
+           "Gauge recalibration, long gaps and missing fine data must not increase an unplugged estimate")
+}
+let beforeGap = dischargeRegression.value!
+assert(dischargeRegression.update(gauge(18, current: -3600, charging: false), at: 200)! <= beforeGap)
+assert(dischargeRegression.update(nil, at: 200.5) == nil)
+assert(dischargeRegression.update(gauge(19, current: -3600, charging: false), at: 201) == 19,
+       "A complete data outage starts a new measurement baseline")
+let beforeReconnect = dischargeRegression.value!
+assert(dischargeRegression.update(gauge(19, current: 3600, charging: true), at: 201.5)! >= beforeReconnect)
+assert(dischargeRegression.update(wholeOnly, at: 202) != nil && dischargeRegression.isLimited)
+assert(dischargeRegression.update(wholeOnly, at: 205) == nil,
+       "Fine estimates must not remain stale indefinitely after losing the raw gauge")
+assert(dischargeRegression.update(gauge(20, current: -3600, charging: false), at: 205.5) == 20)
+
+var chargingRegression = PercentagePredictor()
+_ = chargingRegression.update(gauge(50), at: 0)
+for step in 1...118 { _ = chargingRegression.update(gauge(50), at: Double(step) * 0.5) }
+_ = chargingRegression.update(gauge(50.01), at: 59.5)
+for step in 120...180 {
+    let previous = chargingRegression.value!
+    assert(chargingRegression.update(gauge(50.01), at: Double(step) * 0.5)! > previous)
+}
+print("Passed: reproduced 17.50 → 16.91 rebound, monotonic discharge/charge, gauge recalibration, polling gaps, brief gauge loss, new measurement baselines and genuine reconnect.")
 
 let dischargeProperties: [String: Any] = [
     "BatteryData": ["RemainingCapacity": 4000, "FullChargeCapacity": 8000],

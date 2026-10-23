@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.1 — Discharge estimate correction
+
+- Fixed an upward rebound in the estimated percentage while the battery was draining. The smoothing correction now follows the measured direction of charge flow.
+- Preserve the estimate through gauge recalibration, polling gaps, brief missing decimal samples instead of resetting it upward. Actual system wake and complete data outages retain fresh-baseline behavior.
+- Keep valid discharge prediction moving downward while reconciling earlier prediction error. Large gauge disagreements hold with a waiting label.
+- Added regressions for the reported 17.50% → 16.91% pattern, charging symmetry, recovery and genuine reconnection.
+
 ## 1.3.0 — Initial public preview
 
 - A single horizontal menu bar reading for estimated battery percentage and signed watts.

@@ -4,9 +4,9 @@ import IOKit.ps
 @main
 enum MonitorChecks {
     @MainActor static func main() {
-        func reading(plugged: Bool) -> BatterySnapshot {
+        func reading(plugged: Bool, remaining: Int = 4000) -> BatterySnapshot {
             BatterySnapshot(properties: [
-                "BatteryData": ["RemainingCapacity": 4000, "FullChargeCapacity": 10000],
+                "BatteryData": ["RemainingCapacity": remaining, "FullChargeCapacity": 10000],
                 "ExternalConnected": !plugged, "IsCharging": !plugged,
                 "Amperage": plugged ? 3600 : -3600, "Voltage": 12000
             ], powerSource: [
@@ -58,7 +58,16 @@ enum MonitorChecks {
         next = reading(plugged: false)
         monitor.powerSourceChanged()
         assert(monitor.snapshot?.state == "On battery" && !monitor.isStale)
-        assert(monitor.smoothedPercent == 41)
+        assert(monitor.smoothedPercent == 41, "A complete data outage starts a fresh measurement")
+        let beforeRecalibration = monitor.smoothedPercent!
+        next = reading(plugged: false, remaining: 4100)
+        monitor.refresh()
+        run(0.6)
+        assert(monitor.smoothedPercent! <= beforeRecalibration, "Recalibration must not raise a draining display")
+        center.post(name: NSWorkspace.willSleepNotification, object: nil)
+        next = reading(plugged: false, remaining: 4200)
+        center.post(name: NSWorkspace.didWakeNotification, object: nil)
+        assert(monitor.smoothedPercent == 43, "Wake must account for charging that may have occurred during sleep")
         before = monitor.refreshCount
         monitor.stop()
         run(0.6)

@@ -4,7 +4,7 @@
 
 **Live battery power, estimated charge and time remaining in your Mac's menu bar.**
 
-[Download for Mac](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.0/ChargeBar.zip) · [Releases](https://github.com/1Utkarsh1/ChargeBar/releases) · [Report a bug](https://github.com/1Utkarsh1/ChargeBar/issues/new/choose)
+[Download for Mac](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.1/ChargeBar.zip) · [Releases](https://github.com/1Utkarsh1/ChargeBar/releases) · [Report a bug](https://github.com/1Utkarsh1/ChargeBar/issues/new/choose)
 
 ![macOS 14 or later](https://img.shields.io/badge/macOS-14%2B-111111?logo=apple)
 ![Apple Silicon](https://img.shields.io/badge/Apple-Silicon-14b8a6)
@@ -45,7 +45,7 @@ Click the menu bar reading for power history, charger details and estimated time
 
 ## Install
 
-1. Download [ChargeBar.zip](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.0/ChargeBar.zip) from the release.
+1. Download [ChargeBar.zip](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.1/ChargeBar.zip) from the release.
 2. Unzip it and move **ChargeBar.app** into **Applications**.
 3. Open the app. Its percentage and watts appear in the menu bar.
 
@@ -71,9 +71,9 @@ To start ChargeBar at login, add it under **System Settings → General → Logi
 | macOS battery level | The whole percentage reported by the operating system. |
 | Battery time left | Estimated runtime at current use. Workload and battery reserve affect when low-battery sleep or shutdown occurs. |
 
-The hardware publishes readings in steps. ChargeBar checks every 0.5 seconds and predicts intermediate percentages while current data is valid. It holds the estimate during incompatible or missing current samples and labels prolonged read failures. If prediction reaches two percentage points from a stale raw gauge, it displays **Waiting for battery gauge…** until fresh data arrives.
+The hardware publishes readings in steps. ChargeBar checks every 0.5 seconds and predicts intermediate percentages while current data is valid. It holds the estimate during incompatible or missing current samples and labels prolonged read failures. Prediction stops at two percentage points of disagreement and displays **Waiting for battery gauge…**. If a larger raw-gauge recalibration would require the estimate to move against the power direction, it keeps the previous value and waits for the gauge to catch up. A brief loss of decimal capacity holds the last estimate for up to three seconds with that waiting label, then falls back to the whole macOS value.
 
-Connection status can appear before charging begins while the adapter negotiates power. Watts can settle later than the connection indicator. The app keeps the percentage continuous when changing between charge and discharge.
+Connection status can appear before charging begins while the adapter negotiates power. Watts can settle later than the connection indicator. The decimal estimate holds or decreases while unplugged or draining, and holds or increases with positive charging current. Corrections and brief polling gaps preserve that direction. System wake, an app restart or a complete data outage starts a fresh measurement baseline, allowing for charging while observations were unavailable. Raw gauge and macOS values can still change independently when the battery recalibrates.
 
 See [reading calculations and limits](docs/READINGS.md) for the formulas and fallback behavior.
 

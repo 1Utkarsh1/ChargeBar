@@ -49,7 +49,7 @@ struct ChargePanel: View {
             }
             if let snapshot = monitor.snapshot {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(snapshot.estimatedPercent == nil ? "BATTERY LEVEL" : "ADJUSTED ESTIMATE")
+                    Text(monitor.smoothedPercent == nil ? "BATTERY LEVEL" : "ADJUSTED ESTIMATE")
                         .font(.system(size: 10, weight: .medium)).tracking(1.2).foregroundStyle(.secondary)
                     HStack(alignment: .firstTextBaseline) {
                         Text(monitor.percentText)
@@ -88,7 +88,7 @@ struct ChargePanel: View {
                         .help("Estimated until the battery runs out at current use. Workload changes affect this estimate; low-battery sleep may happen sooner.")
                     if snapshot.isCharging { detail("Until full", snapshot.timeText) }
                 }
-                Text(snapshot.estimatedPercent == nil
+                Text(monitor.smoothedPercent == nil
                      ? "macOS exposes a whole percentage here. Power values update when the hardware reports them."
                      : "≈ includes a +1 percentage point display adjustment, capped at 100%. It predicts between gauge updates using battery current.")
                     .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)

@@ -4,7 +4,7 @@
 
 - macOS with Apple's Command Line Tools and `swiftc` available.
 - The application targets Apple Silicon and macOS 14 or later.
-- The local 1.3.0 build was verified with Swift 6.4 on macOS 27. GitHub Actions checks the build separately on its configured macOS runner.
+- The local 1.3.0 and 1.3.1 builds were verified with Swift 6.4 on macOS 27. GitHub Actions checks the build separately on its configured macOS runner.
 
 ## Build
 
