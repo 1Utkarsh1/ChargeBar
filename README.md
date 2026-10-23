@@ -10,6 +10,10 @@
 ![Apple Silicon](https://img.shields.io/badge/Apple-Silicon-14b8a6)
 [![Build](https://github.com/1Utkarsh1/ChargeBar/actions/workflows/build.yml/badge.svg)](https://github.com/1Utkarsh1/ChargeBar/actions/workflows/build.yml)
 
+<p><strong>In your menu bar</strong></p>
+<img src="assets/menu-bar.png" alt="ChargeBar in the macOS menu bar showing approximately 19.15% battery and -3.9 W" width="294">
+
+<p><strong>Click for details</strong></p>
 <img src="assets/panel.png" alt="ChargeBar's panel showing estimated percentage, battery watts, charger input and time remaining" width="376">
 
 </div>
