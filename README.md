@@ -10,15 +10,27 @@
 ![Apple Silicon](https://img.shields.io/badge/Apple-Silicon-14b8a6)
 [![Build](https://github.com/1Utkarsh1/ChargeBar/actions/workflows/build.yml/badge.svg)](https://github.com/1Utkarsh1/ChargeBar/actions/workflows/build.yml)
 
-<p><strong>In your menu bar</strong></p>
-<img src="assets/menu-bar.png" alt="ChargeBar in the macOS menu bar showing approximately 19.15% battery and -3.9 W" width="294">
-
-<p><strong>Click for details</strong></p>
-<img src="assets/panel.png" alt="ChargeBar's panel showing estimated percentage, battery watts, charger input and time remaining" width="376">
-
 </div>
 
 ChargeBar is a small native macOS menu bar app. See a compact reading such as **`≈57.89% · +12.1 W`**, then click it for the details. It uses Apple's AppKit, SwiftUI and IOKit frameworks and runs entirely on your Mac.
+
+## Screenshots
+
+### Menu bar
+
+Estimated charge and live battery watts, visible at a glance.
+
+<p align="center">
+  <img src="assets/menu-bar.png" alt="ChargeBar's compact menu bar reading: approximately 19.15% and -3.9 W" width="294">
+</p>
+
+### Battery panel
+
+Click the menu bar reading for power history, charger details and estimated time remaining.
+
+<p align="center">
+  <img src="assets/panel.png" alt="ChargeBar's expanded battery panel with power history, charging details and estimated runtime" width="360">
+</p>
 
 ## Features
 
