@@ -21,7 +21,7 @@ ChargeBar is a small native macOS menu bar app. See a compact reading such as **
 Estimated charge and live battery watts, visible at a glance.
 
 <p align="center">
-  <img src="assets/menu-bar.png" alt="ChargeBar's compact menu bar reading: approximately 19.15% and -3.9 W" width="294">
+  <img src="assets/menu-bar.png" alt="ChargeBar's menu bar reading with the battery icon, estimated percentage and live battery watts" width="274">
 </p>
 
 ### Battery panel
