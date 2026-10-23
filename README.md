@@ -29,7 +29,7 @@ Estimated charge and live battery watts, visible at a glance.
 Click the menu bar reading for power history, charger details and estimated time remaining.
 
 <p align="center">
-  <img src="assets/panel.png" alt="ChargeBar's expanded battery panel with power history, charging details and estimated runtime" width="360">
+  <img src="assets/panel.png" alt="ChargeBar's complete native battery panel showing live battery watts, power history and estimated time remaining" width="376">
 </p>
 
 ## Features
