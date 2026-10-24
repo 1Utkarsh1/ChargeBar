@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.3 — Match the macOS battery level
+
+- Anchor the main percentage to the macOS battery level, with current-based decimal prediction between updates. The raw capacity ratio remains visible separately.
+- Show exactly 100.00% when macOS reports 100%, including while unplugged, and respect the system's 0% endpoint. Leaving full charge resumes smooth discharge without dropping to the unrelated raw ratio.
+- Apply the legacy +1 display adjustment only when the macOS level is unavailable and the raw gauge is used instead.
+- Added regression checks for the reported macOS 100% / raw 94.59% mismatch, empty/full endpoints, and monitor polling through discharge from full.
+
 ## 1.3.2 — DMG download
 
 - Added a compressed DMG with ChargeBar and an Applications shortcut for installation by dragging the app.

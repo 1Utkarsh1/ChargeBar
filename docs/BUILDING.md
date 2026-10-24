@@ -4,7 +4,7 @@
 
 - macOS with Apple's Command Line Tools and `swiftc` available.
 - The application targets Apple Silicon and macOS 14 or later.
-- Local builds from 1.3.0 through 1.3.2 were verified with Swift 6.4 on macOS 27. GitHub Actions checks the build separately on its configured macOS runner.
+- Local builds from 1.3.0 through 1.3.3 were verified with Swift 6.4 on macOS 27. GitHub Actions checks the build separately on its configured macOS runner.
 
 ## Build
 
@@ -18,7 +18,7 @@ The app uses Apple's AppKit, SwiftUI, Foundation and IOKit frameworks. No third-
 
 ## Automated checks
 
-- `Tests/main.swift`: capacity parsing, signed current/power, public-state precedence, stale samples, prediction continuity and bounds, runtime estimates, display adjustment and screen placement.
+- `Tests/main.swift`: capacity parsing, signed current/power, public-state precedence, system-percentage anchoring, full/empty endpoints, stale samples, prediction continuity and bounds, runtime estimates, fallback display adjustment and screen placement.
 - `Tests/MonitorChecks.swift`: 200 simulated power transitions, timer cadence, display/system sleep notifications, repeated wake, read failures, recovery and shutdown.
 
 Assertions are enabled for these check executables. The application is compiled with optimization. CI uses the same build script; physical charger and system-resume behavior require hardware checks.

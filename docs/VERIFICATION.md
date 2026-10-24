@@ -1,5 +1,18 @@
 # ChargeBar verification
 
+## 1.3.3 — macOS battery-level baseline
+
+Checked locally on Apple Silicon with macOS 27 on 25 October 2026.
+
+- Captured the reported mismatch while unplugged: macOS 100%, raw remaining capacity 8912 mAh / full-charge capacity 9422 mAh = 94.5871%, with no fully-charged flag. The old predictor displayed 95.5871%. The regression now requires 100.00% from that system reading.
+- Checked system anchoring when raw capacity differs by several points, repeated 100% readings with negative current, the 0% endpoint, missing fine capacity at full, raw recalibration, and smooth monotonic discharge when macOS changes from 100% to 99%.
+- All existing telemetry, predictor, runtime, bounds and screen-placement checks passed. The 200-transition monitor checks also verify the full-charge endpoint and discharge handoff through the real monitor and timer.
+- DMG integrity and ZIP checks passed. Both downloads contain matching, strictly verified version 1.3.3, build 9 apps. The installed app matches the packaged contents; the old installed app was preserved before replacement.
+- The installed app completed a panel-closed live check with 25 logged readings. At the final reading, macOS reported 97%, the displayed prediction was approximately 96.96%, and the separate raw ratio was approximately 92.03%. Every prediction was within one percentage point of the corresponding system reading in this check.
+- Panel fit, screen bounds, the single-line menu title and continued polling passed; the layout check displayed approximately 96.99% against macOS's 97%. Login startup still points to `/Applications/ChargeBar.app`, and one normal instance was restarted after the checks.
+
+The 100% scenario was tested using the captured hardware values and controlled monitor inputs. A new complete physical charging cycle and physical system sleep/resume were not performed. Decimals remain predictions; ordinary readings can differ slightly from the system's whole percentage between updates. Known system endpoints override the prediction immediately.
+
 ## 1.3.2 — DMG distribution
 
 Checked locally on Apple Silicon with macOS 27 on 23 October 2026.

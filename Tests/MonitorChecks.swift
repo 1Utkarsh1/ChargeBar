@@ -68,10 +68,28 @@ enum MonitorChecks {
         next = reading(plugged: false, remaining: 4200)
         center.post(name: NSWorkspace.didWakeNotification, object: nil)
         assert(monitor.smoothedPercent == 43, "Wake must account for charging that may have occurred during sleep")
+        next = BatterySnapshot(properties: [
+            "CurrentCapacity": 100, "MaxCapacity": 100,
+            "BatteryData": ["RemainingCapacity": 8912, "FullChargeCapacity": 9422],
+            "ExternalConnected": false, "IsCharging": false, "Amperage": -739
+        ])
+        monitor.powerSourceChanged()
+        assert(monitor.smoothedPercent == 100 && monitor.percentText == "≈100.00%" && !monitor.isWaitingForGauge)
+        run(0.6)
+        assert(monitor.smoothedPercent == 100, "Polling must retain the macOS full-charge endpoint while unplugged")
+        next = BatterySnapshot(properties: [
+            "CurrentCapacity": 99, "MaxCapacity": 100,
+            "BatteryData": ["RemainingCapacity": 8800, "FullChargeCapacity": 9422],
+            "ExternalConnected": false, "IsCharging": false, "Amperage": -739
+        ])
+        monitor.powerSourceChanged()
+        run(0.6)
+        assert(monitor.smoothedPercent! < 100 && monitor.smoothedPercent! > 99,
+               "Leaving full must resume smooth discharge using the system baseline")
         before = monitor.refreshCount
         monitor.stop()
         run(0.6)
         assert(monitor.refreshCount == before, "Shutdown must invalidate polling and observers")
-        print("Passed: 200 immediate power transitions, display/system sleep, duplicate wake, one live timer, transient/prolonged read failure, recovery, and shutdown.")
+        print("Passed: 200 immediate power transitions, display/system sleep, duplicate wake, one live timer, transient/prolonged read failure, recovery, macOS full-charge endpoint and discharge handoff, and shutdown.")
     }
 }

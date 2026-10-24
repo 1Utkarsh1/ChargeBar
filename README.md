@@ -4,7 +4,7 @@
 
 **Live battery power, estimated charge and time remaining in your Mac's menu bar.**
 
-[Download DMG](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.dmg) · [Download ZIP](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.zip) · [Releases](https://github.com/1Utkarsh1/ChargeBar/releases) · [Report a bug](https://github.com/1Utkarsh1/ChargeBar/issues/new/choose)
+[Download DMG](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.3/ChargeBar.dmg) · [Download ZIP](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.3/ChargeBar.zip) · [Releases](https://github.com/1Utkarsh1/ChargeBar/releases) · [Report a bug](https://github.com/1Utkarsh1/ChargeBar/issues/new/choose)
 
 ![macOS 14 or later](https://img.shields.io/badge/macOS-14%2B-111111?logo=apple)
 ![Apple Silicon](https://img.shields.io/badge/Apple-Silicon-14b8a6)
@@ -41,15 +41,15 @@ Click the menu bar reading for power history, charger details and estimated time
 - **Power details** — adapter input, charger capacity, time until full and a recent battery-power chart.
 
 > [!IMPORTANT]
-> The `≈` percentage is an estimate with a **+1 percentage point display adjustment**, capped at **100.00%**. For example, 56.89% becomes ≈57.89%. It can reach 100% before the battery is physically full. The panel also shows the unadjusted raw gauge and macOS battery level. Two decimal places do not imply measurement accuracy of 0.01%.
+> The `≈` percentage uses **macOS's battery level as its baseline**, with predicted decimals between updates. It shows **100.00% when macOS reports 100%** and respects the system's 0% endpoint. The raw capacity ratio can differ by several percentage points and is shown separately in the panel. If the macOS level is unavailable, the raw fallback retains the earlier +1 display adjustment, capped at 100%. Two decimal places do not imply measurement accuracy of 0.01%.
 
 ## Install
 
-1. Download [ChargeBar.dmg](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.dmg) from the prerelease.
+1. Download [ChargeBar.dmg](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.3/ChargeBar.dmg) from the prerelease.
 2. Open the DMG and drag **ChargeBar.app** onto the **Applications** shortcut. If updating, quit the old app before replacing it.
 3. Eject the DMG, then open ChargeBar from Applications. Its percentage and watts appear in the menu bar.
 
-Prefer a ZIP? Download [ChargeBar.zip](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.2/ChargeBar.zip), unzip it, and move **ChargeBar.app** into **Applications**.
+Prefer a ZIP? Download [ChargeBar.zip](https://github.com/1Utkarsh1/ChargeBar/releases/download/v1.3.3/ChargeBar.zip), unzip it, and move **ChargeBar.app** into **Applications**.
 
 **Requirements:** an Apple Silicon Mac with a built-in battery, macOS 14 or later. Intel binaries are not included. The initial public preview was tested locally on macOS 27; support across other Macs and macOS versions is still being verified.
 
@@ -68,14 +68,14 @@ To start ChargeBar at login, add it under **System Settings → General → Logi
 | Battery watts | Power entering or leaving the battery. |
 | Power into Mac | Adapter input, including power used to run the computer. |
 | Charger capacity | The connected adapter's reported limit. |
-| Adjusted estimate | Smoothed capacity estimate plus the displayed 1-point adjustment. |
+| Estimated charge | macOS battery level with current-based decimal prediction between updates. |
 | Raw battery gauge | Remaining capacity divided by full-charge capacity, without prediction or the display adjustment. |
 | macOS battery level | The whole percentage reported by the operating system. |
 | Battery time left | Estimated runtime at current use. Workload and battery reserve affect when low-battery sleep or shutdown occurs. |
 
-The hardware publishes readings in steps. ChargeBar checks every 0.5 seconds and predicts intermediate percentages while current data is valid. It holds the estimate during incompatible or missing current samples and labels prolonged read failures. Prediction stops at two percentage points of disagreement and displays **Waiting for battery gauge…**. If a larger raw-gauge recalibration would require the estimate to move against the power direction, it keeps the previous value and waits for the gauge to catch up. A brief loss of decimal capacity holds the last estimate for up to three seconds with that waiting label, then falls back to the whole macOS value.
+The hardware publishes readings in steps. ChargeBar checks every 0.5 seconds and predicts intermediate percentages while current data is valid. It holds the estimate during incompatible or missing current samples and labels prolonged read failures. Prediction stops at two percentage points of disagreement with its baseline and displays **Waiting for battery gauge…**. Raw capacity changes do not rebase the main estimate when macOS's level is available. A brief loss of decimal capacity holds the last estimate for up to three seconds with that waiting label, then falls back to the whole macOS value. The system's 0% and 100% endpoints take effect immediately, including when fine capacity is unavailable.
 
-Connection status can appear before charging begins while the adapter negotiates power. Watts can settle later than the connection indicator. The decimal estimate holds or decreases while unplugged or draining, and holds or increases with positive charging current. Corrections and brief polling gaps preserve that direction. System wake, an app restart or a complete data outage starts a fresh measurement baseline, allowing for charging while observations were unavailable. Raw gauge and macOS values can still change independently when the battery recalibrates.
+Connection status can appear before charging begins while the adapter negotiates power. Watts can settle later than the connection indicator. Between system endpoints, the decimal estimate holds or decreases while unplugged or draining, and holds or increases with positive charging current. Corrections and brief polling gaps preserve that direction. System wake, an app restart, a complete data outage or a change between system and raw fallback sources starts a fresh measurement baseline. Raw gauge and macOS values can still change independently when the battery recalibrates.
 
 See [reading calculations and limits](docs/READINGS.md) for the formulas and fallback behavior.
 

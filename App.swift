@@ -49,7 +49,7 @@ struct ChargePanel: View {
             }
             if let snapshot = monitor.snapshot {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(monitor.smoothedPercent == nil ? "BATTERY LEVEL" : "ADJUSTED ESTIMATE")
+                    Text(monitor.smoothedPercent == nil ? "BATTERY LEVEL" : "ESTIMATED CHARGE")
                         .font(.system(size: 10, weight: .medium)).tracking(1.2).foregroundStyle(.secondary)
                     HStack(alignment: .firstTextBaseline) {
                         Text(monitor.percentText)
@@ -90,7 +90,9 @@ struct ChargePanel: View {
                 }
                 Text(monitor.smoothedPercent == nil
                      ? "macOS exposes a whole percentage here. Power values update when the hardware reports them."
-                     : "≈ includes a +1 percentage point display adjustment, capped at 100%. It predicts between gauge updates using battery current.")
+                     : snapshot.officialPercent != nil
+                     ? "≈ follows macOS battery level and predicts decimals using battery current. The raw battery gauge can differ."
+                     : "≈ uses the raw gauge with a +1 percentage point adjustment, capped at 100%. Decimals are predicted using battery current.")
                     .font(.system(size: 10)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             } else {
                 Label("Battery data unavailable", systemImage: "battery.0percent")
@@ -176,7 +178,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         button.image = NSImage(systemSymbolName: symbol, accessibilityDescription: "ChargeBar")?
             .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 12, weight: .medium))
         button.image?.isTemplate = true
-        button.toolTip = "ChargeBar · \(snapshot?.state ?? "Battery unavailable")\nAdjusted estimate (+1 percentage point): \(monitor.percentText) · \(power) battery power\nBattery time left: \(snapshot?.batteryTimeText ?? "Calculating…")\nRaw gauge: \(snapshot?.percentText ?? "—%")\nClick for details"
+        button.toolTip = "ChargeBar · \(snapshot?.state ?? "Battery unavailable")\nEstimated charge: \(monitor.percentText) · \(power) battery power\nBattery time left: \(snapshot?.batteryTimeText ?? "Calculating…")\nRaw gauge: \(snapshot?.percentText ?? "—%")\nClick for details"
         button.setAccessibilityLabel(button.toolTip)
         if CommandLine.arguments.contains("--verify-background") {
             print("POLL \(ProcessInfo.processInfo.systemUptime) \(snapshot?.estimatedPercent ?? -1) \(monitor.smoothedPercent ?? -1) \(snapshot?.officialPercent ?? -1) plugged=\(snapshot?.isPluggedIn == true) charging=\(snapshot?.isCharging == true) current=\(snapshot?.batteryCurrentMA ?? 0) events=\(monitor.powerChangeCount) stale=\(monitor.isStale)")

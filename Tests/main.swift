@@ -153,6 +153,47 @@ adjusted.reset()
 assert(adjusted.update(wholeOnly, at: 92) == nil && adjusted.displayValue == nil)
 print("Passed: +1 percentage point display adjustment, exact example values, unchanged raw estimate, and 100.00% ceiling.")
 
+func systemGauge(_ official: Double, raw: Double = 94.58713648906814,
+                 current: Double = -3600, charging: Bool = false) -> BatterySnapshot {
+    BatterySnapshot(properties: [
+        "CurrentCapacity": official, "MaxCapacity": 100,
+        "BatteryData": ["RemainingCapacity": raw * 100, "FullChargeCapacity": 10000],
+        "Amperage": current, "ExternalConnected": charging, "IsCharging": charging
+    ])
+}
+var systemLevel = PercentagePredictor()
+_ = systemLevel.update(systemGauge(99, current: 3600, charging: true), at: 0)
+assert(near(systemLevel.displayValue, 99), "macOS is the display baseline even when the raw gauge is several points lower")
+assert(near(systemLevel.update(systemGauge(99, raw: 94.6, current: 3600, charging: true), at: 0.5), 99.005))
+_ = systemLevel.update(systemGauge(100), at: 1)
+assert(near(systemLevel.displayValue, 100) && !systemLevel.isLimited)
+assert(!systemGauge(100).isPluggedIn && !systemGauge(100).isFullyCharged,
+       "The reported full-charge mismatch occurs while unplugged, without a fully-charged flag")
+for step in 3...20 {
+    _ = systemLevel.update(systemGauge(100, raw: 94.4), at: Double(step) * 0.5)
+    assert(systemLevel.displayValue == 100 && !systemLevel.isLimited)
+}
+_ = systemLevel.update(systemGauge(99, raw: 93.9), at: 10.5)
+assert(systemLevel.displayValue == 100, "Leaving full must not drop to the unrelated raw capacity ratio")
+for step in 22...40 {
+    let previous = systemLevel.displayValue!
+    _ = systemLevel.update(systemGauge(99, raw: 93.8), at: Double(step) * 0.5)
+    assert(systemLevel.displayValue! < previous && systemLevel.displayValue! > 98.9)
+}
+_ = systemLevel.update(BatterySnapshot(properties: ["CurrentCapacity": 100, "MaxCapacity": 100]), at: 20.5)
+assert(systemLevel.displayValue == 100, "System full charge remains valid when fine capacity is missing")
+_ = systemLevel.update(systemGauge(0, raw: 0.5), at: 21)
+assert(systemLevel.displayValue == 0, "The system empty endpoint must not receive the fallback display offset")
+systemLevel.reset()
+_ = systemLevel.update(systemGauge(57, raw: 54), at: 0)
+for step in 1...20 {
+    let previous = systemLevel.displayValue!
+    _ = systemLevel.update(systemGauge(57, raw: 55), at: Double(step) * 0.5)
+    assert(systemLevel.displayValue! < previous, "Raw-gauge recalibration must not raise a system-anchored draining estimate")
+}
+assert(near(systemGauge(100).estimatedPercent, 94.58713648906814), "The raw gauge must remain available without display calibration")
+print("Passed: reproduced macOS 100/raw 94.59 mismatch, system anchoring, full/empty endpoints, fine-gauge loss, raw recalibration, and smooth discharge from full.")
+
 var dischargeRegression = PercentagePredictor()
 _ = dischargeRegression.update(gauge(16.5, current: -3600, charging: false), at: 0)
 for step in 1...118 {

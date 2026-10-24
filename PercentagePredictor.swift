@@ -6,10 +6,11 @@ struct PercentagePredictor {
     private var lastGaugeTime: TimeInterval?
     private var integratedCharge: Double = 0
     private var correction: Double = 0
+    private var usesSystemLevel = false
     private(set) var value: Double?
     private(set) var isLimited = false
 
-    var displayValue: Double? { value.map { min(100, $0 + 1) } }
+    var displayValue: Double? { value.map { min(100, $0 + (usesSystemLevel ? 0 : 1)) } }
 
     mutating func reset() { self = PercentagePredictor() }
 
@@ -17,12 +18,25 @@ struct PercentagePredictor {
 
     mutating func update(_ snapshot: BatterySnapshot?, at time: TimeInterval) -> Double? {
         guard let snapshot else { reset(); return nil }
-        guard let raw = snapshot.estimatedPercent else {
+        if let official = snapshot.officialPercent, official == 0 || official == 100 {
+            reset()
+            usesSystemLevel = true
+            lastRaw = official
+            lastTime = time
+            lastGaugeTime = time
+            value = official
+            return value
+        }
+        guard let fine = snapshot.estimatedPercent else {
             guard let lastGaugeTime, time - lastGaugeTime <= 3 else { reset(); return nil }
             lastTime = time
             isLimited = value != nil
             return value
         }
+        let systemLevel = snapshot.officialPercent != nil
+        if systemLevel != usesSystemLevel { reset() }
+        usesSystemLevel = systemLevel
+        let raw = snapshot.officialPercent ?? fine
         lastGaugeTime = time
         let previous = value
         let current = snapshot.batteryCurrentMA ?? 0
